@@ -1,0 +1,81 @@
+package maccess;
+
+import java.util.*;
+import test.*; // Assuming this package contains the classes: PinNoLength, CheckPinNo, WithDraw, and Deposit
+
+public class BankMainClass {
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in); // Scanner for user input
+        int count = 0; // Counter for tracking incorrect PIN attempts
+
+        // Infinite loop to keep the program running until conditions are met
+        xyz: 
+        while (true) {
+            System.out.println("Enter the PIN number:");
+            int pinNo = s.nextInt(); // Input PIN number
+
+            // Check the length of the PIN number
+            PinNoLength pn1 = new PinNoLength();
+            int len = pn1.length(pinNo);
+
+            // Proceed if PIN length is valid (4 digits)
+            if (len == 4) {
+                CheckPinNo cpn = new CheckPinNo();
+                boolean isValid = cpn.verify(pinNo); // Verify the entered PIN number
+
+                if (isValid) {
+                    System.out.println("=== Choice ===");
+                    System.out.println("1. Withdraw");
+                    System.out.println("2. Deposit");
+                    System.out.print("Enter your choice: ");
+                    
+                    // Handle the user's choice
+                    switch (s.nextInt()) {
+                        case 1: // Withdraw option
+                            System.out.println("Enter the amount to withdraw:");
+                            int withdrawAmt = s.nextInt();
+                            
+                            // Check if the amount is valid (non-negative and divisible by 100)
+                            if (withdrawAmt >= 0 && withdrawAmt % 100 == 0) {
+                                WithDraw wd = new WithDraw();
+                                wd.process(withdrawAmt); // Process the withdrawal
+                            } else {
+                                System.out.println("Invalid amount. Amount must be non-negative and divisible by 100.");
+                            }
+                            break xyz; // Exit the loop after transaction
+                        
+                        case 2: // Deposit option
+                            System.out.println("Enter the amount to deposit:");
+                            int depositAmt = s.nextInt();
+                            
+                            // Check if the amount is valid (non-negative and divisible by 100)
+                            if (depositAmt >= 0 && depositAmt % 100 == 0) {
+                                Deposit dp = new Deposit();
+                                dp.process(depositAmt); // Process the deposit
+                            } else {
+                                System.out.println("Invalid amount. Amount must be non-negative and divisible by 100.");
+                            }
+                            break xyz; // Exit the loop after transaction
+                        
+                        default: // Invalid choice
+                            System.out.println("Invalid choice. Please select a valid option.");
+                            break xyz; // Exit the loop
+                    }
+                } else {
+                    System.out.println("Incorrect PIN number.");
+                    count++; // Increment the incorrect PIN attempt counter
+                }
+
+                // Block the transaction after 3 incorrect attempts
+                if (count == 3) {
+                    System.out.println("Sorry! Transaction Blocked.");
+                    break; // Exit the loop
+                }
+            } else {
+                System.out.println("Invalid PIN number length. PIN must be 4 digits.");
+            }
+        }
+
+        s.close(); // Close the scanner to prevent resource leaks
+    }
+}
